@@ -12,7 +12,8 @@ void do_generate(double *M1, double *M2, int N, unsigned int *seed) {
     for (int j = 0; j < N; ++j) {
         M1[j] = (rand_r(seed) % A) + 1;
     }
-    for (int j = 0; j < N / 2; ++j) {
+    int M2_LEN = N / 2;
+    for (int j = 0; j < M2_LEN; ++j) {
         M2[j] = (rand_r(seed) % (A * 10)) + 1;
     }
 }
@@ -20,22 +21,27 @@ void do_generate(double *M1, double *M2, int N, unsigned int *seed) {
 void do_map(double *M1, double *M2, const int N) {
     // ВариантM1 = 1 + (5 % 7) = 6 - Кубический корень после деления на число e
     for (int j = 0; j < N; ++j) {
-        M1[j] = cbrt(M1[j]) / M_E;
+        M1[j] /= M_E;
+        M1[j] = cbrt(M1[j]);
     }
     // ВариантM2 = 1 + (5 % 8) = 6 - Десятичный логарив, возведенный в степень e
-    double M2_COPY[N / 2];
-    for (int j = 0; j < N / 2; ++j) {
-        M2_COPY[j] = M1[j];
+    int M2_LEN = N / 2;
+    double M2_PREV[M2_LEN];
+    M2_PREV[0] = 0.0;
+    for (int j = 1; j < M2_LEN; ++j) {
+        M2_PREV[j] = M2[j - 1];
     }
-    for (int j = 0; j < N / 2; ++j) {
-        double prev = !j ? 0.0 : M2_COPY[j - 1];
-        M2[j] = pow(log10(M2[j] + prev), M_E);
+    for (int j = 0; j < M2_LEN; ++j) {
+        M2[j] += M2_PREV[j];
+    }
+    for (int j = 0; j < M2_LEN; ++j) {
+        M2[j] = pow(log10(M2[j]), M_E);
     }
 }
 
 void do_merge(double *M1, double *M2, const int N) {
-    // Вариант = 1 + (5 % 6) = 6 = Модуль разности
-    for (int j = 0; j < N / 2; ++j) {
+    // Вариант = 1 + (5 % 6) = 6 = Модуль разint M2_LEN = N / 2ности
+    for (int j = 0; j < N; ++j) {
         M2[j] = fabs(M1[j] - M2[j]);
     }
 }
@@ -110,7 +116,7 @@ int main(int argc, char *argv[]) {
         unsigned int seed = i;
         do_generate(M1, M2, N, &seed);
         do_map(M1, M2, N);
-        do_merge(M1, M2, N);
+        do_merge(M1, M2, N / 2);
         do_sort(M2, N / 2);
         double X = do_reduce(M2, N / 2);
         if (i < 5) {

@@ -30,3 +30,5 @@ for ((N = N1; N <=N2; N+=DELTA))
   do
     ./lab1-par-4 $N par4N/par4N.out par4N/X.out
   done
+
+python3 build_plot.py

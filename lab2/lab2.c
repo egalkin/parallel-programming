@@ -24,13 +24,12 @@ void do_map(double *M1, double *M2, const int N) {
     fwsCbrt_64f_A53(M1, M1, N);
     // ВариантM2 = 1 + (5 % 8) = 6 - Десятичный логарив, возведенный в степень e
     int M2_LEN = N / 2;
-    double M2_PREVS[M2_LEN];
-    M2_PREVS[0] = 0;
-    for (int j = 1; j < M2_LEN; ++j) {
-        M2_PREVS[j] = M2[j-1];
-    }
+    double M2_COPY[M2_LEN];
     for (int j = 0; j < M2_LEN; ++j) {
-        M2[j] += M2_PREVS[j];
+        M2_COPY[j] = M2[j];
+    }
+    for (int j = 1; j < M2_LEN; ++j) {
+        M2[j] = M2_COPY[j] + M2_COPY[j - 1];
     }
     fwsLog10_64f_A53(M2, M2, M2_LEN);
     fwsPowx_64f_A53(M2, M_E, M2, M2_LEN);

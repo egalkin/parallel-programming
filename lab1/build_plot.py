@@ -8,8 +8,9 @@ print(n_values)
 
 for dir_name, line_name in [('seqN', 'seq(N)'),
                             ('par1N', 'par-1(N)'),
-                            ('par2N', 'par-2(N)'),
                             ('par4N', 'par-4(N)'),
+                            ('par8N', 'par-8(N)'),
+                            ('par10N', 'par-10(N)'),
                             ]:
     with open(f'{dir_name}/{dir_name}.out', 'r') as file:
         values = []

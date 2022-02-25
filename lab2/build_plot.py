@@ -4,12 +4,12 @@ n1 = 1000
 n2 = 40000
 delta = (n2 - n1) / 10
 n_values = [n1 + delta * i for i in range(0, 11)]
+cores_num = 8
 print(n_values)
 
-for dir_name, line_name in [('fwM1', 'fwM-1(N)'),
-                            ('fwM2', 'fwM-2(N)'),
-                            ('fwM5', "fwM-5(N)"),
-                            ]:
+for core in range(1, cores_num + 1):
+    dir_name = f'fwM{core}'
+    line_name = f'fwM-{core}(N)'
     with open(f'{dir_name}/{dir_name}.out', 'r') as file:
         values = []
         for line in file:

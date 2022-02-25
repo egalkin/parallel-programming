@@ -6,10 +6,10 @@ DELTA_N=$((N2 - N1))
 DELTA=$((DELTA_N / 10))
 
 make clean
-rm -rd seqN par1N par2N par4N
+rm -rd seqN par*
 
 make all
-mkdir seqN par1N par2N par4N
+mkdir seqN par1N par4N par8N par10N
 
 for ((N = N1; N <=N2; N+=DELTA))
   do
@@ -23,12 +23,17 @@ for ((N = N1; N <=N2; N+=DELTA))
 
 for ((N = N1; N <=N2; N+=DELTA))
   do
-    ./lab1-par-2 $N par2N/par2N.out par2N/X.out
+    ./lab1-par-4 $N par4N/par4N.out par4N/X.out
   done
 
 for ((N = N1; N <=N2; N+=DELTA))
   do
-    ./lab1-par-4 $N par4N/par4N.out par4N/X.out
+    ./lab1-par-8 $N par8N/par8N.out par8N/X.out
+  done
+
+for ((N = N1; N <=N2; N+=DELTA))
+  do
+    ./lab1-par-10 $N par10N/par10N.out par10N/X.out
   done
 
 python3 build_plot.py

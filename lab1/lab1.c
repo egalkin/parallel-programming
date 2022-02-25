@@ -26,13 +26,12 @@ void do_map(double *M1, double *M2, const int N) {
     }
     // ВариантM2 = 1 + (5 % 8) = 6 - Десятичный логарив, возведенный в степень e
     int M2_LEN = N / 2;
-    double M2_PREV[M2_LEN];
-    M2_PREV[0] = 0.0;
-    for (int j = 1; j < M2_LEN; ++j) {
-        M2_PREV[j] = M2[j - 1];
-    }
+    double M2_COPY[M2_LEN];
     for (int j = 0; j < M2_LEN; ++j) {
-        M2[j] += M2_PREV[j];
+        M2_COPY[j] = M2[j];
+    }
+    for (int j = 1; j < M2_LEN; ++j) {
+        M2[j] = M2_COPY[j] + M2_COPY[j - 1];
     }
     for (int j = 0; j < M2_LEN; ++j) {
         M2[j] = pow(log10(M2[j]), M_E);

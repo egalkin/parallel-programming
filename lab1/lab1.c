@@ -8,70 +8,72 @@
 
 const int A = 240;
 
-void do_generate(double *M1, double *M2, int N, unsigned int *seed) {
-    for (int j = 0; j < N; ++j) {
-        M1[j] = (rand_r(seed) % A) + 1;
+struct array_d {
+    size_t size;
+    double* restrict array;
+};
+
+void do_generate(struct array_d m1, struct array_d m2, unsigned int *seed) {
+    for (int j = 0; j < m1.size; ++j) {
+        m1.array[j] = (rand_r(seed) % A) + 1;
     }
-    int M2_LEN = N / 2;
-    for (int j = 0; j < M2_LEN; ++j) {
-        M2[j] = (rand_r(seed) % (A * 10)) + 1;
+    for (int j = 0; j < m2.size; ++j) {
+        m2.array[j] = (rand_r(seed) % (A * 10)) + 1;
     }
 }
 
-void do_map(double *M1, double *M2, const int N) {
+void do_map(struct array_d m1, struct array_d m2) {
     // ВариантM1 = 1 + (5 % 7) = 6 - Кубический корень после деления на число e
-    for (int j = 0; j < N; ++j) {
-        M1[j] /= M_E;
-        M1[j] = cbrt(M1[j]);
+    for (int j = 0; j < m1.size; ++j) {
+        double tmp = m1.array[j] / M_E;
+        m1.array[j] = cbrt(tmp);
     }
     // ВариантM2 = 1 + (5 % 8) = 6 - Десятичный логарив, возведенный в степень e
-    int M2_LEN = N / 2;
-    double M2_COPY[M2_LEN];
-    for (int j = 0; j < M2_LEN; ++j) {
-        M2_COPY[j] = M2[j];
+    double* restrict temp_arr = malloc(m2.size * sizeof(double));
+    for (int j = 0; j < m2.size; ++j) {
+        temp_arr[j] = m2.array[j];
     }
-    for (int j = 1; j < M2_LEN; ++j) {
-        M2[j] = M2_COPY[j] + M2_COPY[j - 1];
+    m2.array[0] = pow(log10(0 + temp_arr[0]), M_E);
+    for (int j = 1; j < m2.size; ++j) {
+        m2.array[j] = pow(log10(temp_arr[j - 1] + temp_arr[j]), M_E);
     }
-    for (int j = 0; j < M2_LEN; ++j) {
-        M2[j] = pow(log10(M2[j]), M_E);
+    free(temp_arr);
+}
+
+void do_merge(struct array_d m1, struct array_d m2) {
+    // Вариант = 1 + (5 % 6) = 6 = Модуль разности
+    for (int j = 0; j < m2.size; ++j) {
+        m2.array[j] = fabs(m1.array[j] - m2.array[j]);
     }
 }
 
-void do_merge(double *M1, double *M2, const int N) {
-    // Вариант = 1 + (5 % 6) = 6 = Модуль разint M2_LEN = N / 2ности
-    for (int j = 0; j < N; ++j) {
-        M2[j] = fabs(M1[j] - M2[j]);
-    }
-}
-
-void do_sort(double *M, const int n) {
+void do_sort(struct array_d m) {
     // Вариант = 6 - Сортировка вставками
     // Реализация взята с https://www.geeksforgeeks.org/insertion-sort/
     int i, j;
     double key;
-    for (i = 1; i < n; i++) {
-        key = M[i];
+    for (i = 1; i < m.size; i++) {
+        key = m.array[i];
         j = i - 1;
-        while (j >= 0 && M[j] > key) {
-            M[j + 1] = M[j];
+        while (j >= 0 && m.array[j] > key) {
+            m.array[j + 1] = m.array[j];
             j--;
         }
-        M[j + 1] = key;
+        m.array[j + 1] = key;
     }
 }
 
-double do_reduce(const double *M, const int n) {
+double do_reduce(struct array_d m) {
     double min_element = 1000000000.0;
-    for (int i = 0; i < n; ++i) {
-        if (M[i] != 0) {
-            min_element = M[i] < min_element ? M[i] : min_element;
+    for (int i = 0; i < m.size; ++i) {
+        if (m.array[i] != 0) {
+            min_element = m.array[i] < min_element ? m.array[i] : min_element;
         }
     }
     double sinus_sum = 0.0;
-    for (int i = 0; i < n; ++i) {
-        if ((int) floor(M[i] / min_element) % 2 == 0) {
-            sinus_sum = sin(M[i]);
+    for (int i = 0; i < m.size; ++i) {
+        if ((int) floor(m.array[i] / min_element) % 2 == 0) {
+            sinus_sum = sin(m.array[i]);
         }
     }
     return sinus_sum;
@@ -109,15 +111,18 @@ int main(int argc, char *argv[]) {
     gettimeofday(&T1, NULL); // запомнить текущее время
     double experiments_result[5];
     for (i = 0; i < 100; ++i) {
-        double M1[N];
-        double M2[N / 2];
+        struct array_d m1, m2;
+        m1.size = N;
+        m1.array = malloc(m1.size * sizeof(double));
+        m2.size = N / 2;
+        m2.array = malloc(m2.size * sizeof(double));
         srand(i);
         unsigned int seed = i;
-        do_generate(M1, M2, N, &seed);
-        do_map(M1, M2, N);
-        do_merge(M1, M2, N / 2);
-        do_sort(M2, N / 2);
-        double X = do_reduce(M2, N / 2);
+        do_generate(m1, m2, &seed);
+        do_map(m1, m2);
+        do_merge(m1, m2);
+        do_sort(m2);
+        double X = do_reduce(m2);
         if (i < 5) {
             experiments_result[i] = X;
         }

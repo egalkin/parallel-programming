@@ -4,7 +4,7 @@ N1=1000
 N2=40000
 DELTA_N=$((N2 - N1))
 DELTA=$((DELTA_N / 10))
-CORES_NUMBER=8
+CORES_NUMBER=4
 
 make clean
 rm -rd fwM1 fwM2 fwM5

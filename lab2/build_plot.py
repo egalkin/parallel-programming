@@ -4,7 +4,7 @@ n1 = 1000
 n2 = 40000
 delta = (n2 - n1) / 10
 n_values = [n1 + delta * i for i in range(0, 11)]
-cores_num = 8
+cores_num = 4
 print(n_values)
 
 for core in range(1, cores_num + 1):

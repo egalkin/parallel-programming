@@ -7,12 +7,12 @@ DELTA=$((DELTA_N / 10))
 CORES_NUMBER=4
 
 make clean
-rm -rd fwM1 fwM2 fwM5
+rm -rd fwM*
 
-make all
 rm -rf fwM*
-export LD_LIBRARY_PATH=FW_1.3.1_Lin64/lib:$LD_LIBRARY_PATH
-echo $LD_LIBRARY_PATH
+export FW_HOME=FW_1.3.1_Lin64
+make all
+export LD_LIBRARY_PATH=$FW_HOME/lib:$LD_LIBRARY_PATH
 
 for ((CORE = 1; CORE <= CORES_NUMBER; CORE++))
   do

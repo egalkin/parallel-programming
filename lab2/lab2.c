@@ -19,7 +19,7 @@ void do_generate(struct array_d m1, struct array_d m2, unsigned int *seed) {
         m1.array[j] = (rand_r(seed) % A) + 1;
     }
     for (int j = 0; j < m2.size; ++j) {
-        m2.array[j] = (rand_r(seed) % (A * 10)) + 1;
+        m2.array[j] = (rand_r(seed) % (A * 9)) + A;
     }
 }
 
@@ -112,13 +112,12 @@ int main(int argc, char *argv[]) {
     fwSetNumThreads(M);
     gettimeofday(&T1, NULL); // запомнить текущее время
     double experiments_result[5];
+    struct array_d m1, m2;
+    m1.size = N;
+    m1.array = malloc(m1.size * sizeof(double));
+    m2.size = N / 2;
+    m2.array = malloc(m2.size * sizeof(double));
     for (i = 0; i < 100; ++i) {
-        struct array_d m1, m2;
-        m1.size = N;
-        m1.array = malloc(m1.size * sizeof(double));
-        m2.size = N / 2;
-        m2.array = malloc(m2.size * sizeof(double));
-        srand(i);
         unsigned int seed = i;
         do_generate(m1, m2, &seed);
         do_map(m1, m2);
@@ -140,5 +139,7 @@ int main(int argc, char *argv[]) {
         size_t experiments_size = sizeof(experiments_result)/sizeof(experiments_result[0]);
         write_first_five_experiments_x(argv[4], experiments_result, N, experiments_size);
     }
+    free(m1.array);
+    free(m2.array);
     return 0;
 }

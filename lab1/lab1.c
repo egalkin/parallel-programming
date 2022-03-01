@@ -64,7 +64,10 @@ void do_sort(struct array_d m) {
 }
 
 double do_reduce(struct array_d m) {
-    double min_element = 1000000000.0;
+    if (m.size <= 0) {
+        return 0.0;
+    }
+    double min_element = m.array[0];
     for (int i = 0; i < m.size; ++i) {
         if (m.array[i] != 0) {
             min_element = m.array[i] < min_element ? m.array[i] : min_element;
@@ -108,13 +111,13 @@ int main(int argc, char *argv[]) {
     if (N < 0) {
         return -1;
     }
-    gettimeofday(&T1, NULL); // запомнить текущее время
     double experiments_result[5];
     struct array_d m1, m2;
     m1.size = N;
     m1.array = malloc(m1.size * sizeof(double));
     m2.size = N / 2;
     m2.array = malloc(m2.size * sizeof(double));
+    gettimeofday(&T1, NULL); // запомнить текущее время
     for (i = 0; i < 100; ++i) {
         unsigned int seed = i;
         do_generate(m1, m2, &seed);

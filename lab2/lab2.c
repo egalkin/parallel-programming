@@ -15,11 +15,11 @@ struct array_d {
 };
 
 void do_generate(struct array_d m1, struct array_d m2, unsigned int *seed) {
-    for (int j = 0; j < m1.size; ++j) {
-        m1.array[j] = (rand_r(seed) % A) + 1;
+    for (int i = 0; i < m1.size; ++i) {
+        m1.array[i] = (rand_r(seed) % A) + 1;
     }
-    for (int j = 0; j < m2.size; ++j) {
-        m2.array[j] = (rand_r(seed) % (A * 9)) + A;
+    for (int i = 0; i < m2.size; ++i) {
+        m2.array[i] = (rand_r(seed) % (A * 9)) + A;
     }
 }
 
@@ -71,7 +71,7 @@ double do_reduce(struct array_d m) {
     double sinus_sum = 0.0;
     for (int i = 0; i < m.size; ++i) {
         if ((int) floor(m.array[i] / min_element) % 2 == 0) {
-            sinus_sum = sin(m.array[i]);
+            sinus_sum += sin(m.array[i]);
         }
     }
     return sinus_sum;

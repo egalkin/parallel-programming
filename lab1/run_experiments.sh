@@ -1,7 +1,7 @@
 #!/bin/bash
 
-N1=1000
-N2=40000
+N1=10
+N2=1000
 DELTA_N=$((N2 - N1))
 DELTA=$((DELTA_N / 10))
 

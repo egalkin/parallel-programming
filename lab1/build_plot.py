@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n1 = 10
-n2 = 1000
+n1 = 1000
+n2 = 40000
 delta = (n2 - n1) / 10
 n_values = [n1 + delta * i for i in range(0, 11)]
 seqValue = []
